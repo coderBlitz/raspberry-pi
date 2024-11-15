@@ -2,7 +2,18 @@
 
 pub mod gpio;
 
+/* ROM addresses
+*/
 pub const ROM_BASE: u32 = 0x0000_0000;
+pub const ROM_INIT_SP: u32 = ROM_BASE;
+pub const ROM_BOOT_RESET_FN: u32 = ROM_BASE + 0x4;
+pub const ROM_BOOT_NMI_FN: u32 = ROM_BASE + 0x8;
+pub const ROM_BOOT_FAULT_FN: u32 = ROM_BASE + 0xC;
+pub const ROM_BOOT_MAGIC: u32 = ROM_BASE + 0x10;
+pub const ROM_BOOT_VER: u32 = ROM_BASE + 0x13;
+pub const ROM_FUNC_TABLE: u32 = ROM_BASE + 0x14;
+pub const ROM_DATA_TABLE: u32 = ROM_BASE + 0x16;
+pub const ROM_TABLE_LOOKUP_FN: u32 = ROM_BASE + 0x18;
 
 /* XIP
 */

@@ -10,3 +10,4 @@
 pub mod consts;
 pub mod resets;
 pub mod registers;
+pub mod rom;
