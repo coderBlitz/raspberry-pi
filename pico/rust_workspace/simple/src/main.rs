@@ -78,6 +78,7 @@ const GPIO_FUNC_NULL: u32 = 0x1F;
 /// Will call all other functions and do all processing. Not named _start or
 ///  _main to avoid accidental success when linking/compiling.
 #[no_mangle]
+#[link_section = ".strat"]
 pub extern "C" fn _strat() -> ! {
 	flash_led()
 }
