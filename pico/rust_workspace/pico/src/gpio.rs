@@ -7,7 +7,7 @@ use crate::registers::Register;
 //  is PADS_BANK0_BASE + id*4.
 // Each GPIO pin gets 8 bytes (4 for STATUS, 4 for CTRL), so multiply
 //  ID by 8 to get the address. Bit shifting here to avoid multiply.
-struct Gpio(Register);
+pub struct Gpio(Register);
 impl Gpio {
 	/// Get instance of a GPIO pin, where `id <= 29`.
 	pub const unsafe fn gpio_id(id: u32) -> Self {
@@ -15,7 +15,7 @@ impl Gpio {
 			Gpio(Register::new(IO_BANK0_BASE + id << 3))
 		}
 	}
-	/// Get instance of a QSPI pin, where `id <= 6`.
+	/// Get instance of a QSPI pin, where `id <= 5`.
 	pub const unsafe fn qspi_id(id: u32) -> Self {
 		unsafe {
 			Gpio(Register::new(IO_QSPI_BASE + id << 3))
