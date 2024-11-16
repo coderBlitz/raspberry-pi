@@ -18,13 +18,13 @@ impl Register {
 	}
 
 	#[inline(always)]
-	pub fn write(&mut self, value: u32) {
+	pub fn set(&mut self, value: u32) {
 		unsafe {
 			self.as_mut().write_volatile(value);
 		}
 	}
 	#[inline(always)]
-	pub fn read(&self) -> u32 {
+	pub fn get(&self) -> u32 {
 		unsafe {
 			self.as_mut().read_volatile()
 		}
