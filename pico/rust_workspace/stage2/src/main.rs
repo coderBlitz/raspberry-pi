@@ -13,6 +13,7 @@ use pico::{
 	self,
 	consts::all::*,
 	gpio::Gpio,
+	registers::Register,
 	resets,
 };
 
@@ -65,12 +66,12 @@ fn jump_to_entry() -> ! {
 #[inline(always)]
 fn enable_xip() { unsafe {
 	// Make register vars
-	let xip_ssienr = XIP_SSI_SSIENR as *mut u32;
-	let xip_ctrl = XIP_CTRL_BASE as *mut u32;
-	let xip_ctrlr0 = XIP_SSI_CTRLR0 as *mut u32;
-	let xip_ctrlr1 = XIP_SSI_CTRLR1 as *mut u32;
-	let xip_spi_ctrlr0 = XIP_SSI_SPI_CTRLR0 as *mut u32;
-	let xip_baudr = XIP_SSI_BAUDR as *mut u32;
+	let mut xip_ssienr = Register::new(XIP_SSI_SSIENR);
+	let mut xip_ctrl = Register::new(XIP_CTRL_BASE);
+	let mut xip_ctrlr0 = Register::new(XIP_SSI_CTRLR0);
+	let mut xip_ctrlr1 = Register::new(XIP_SSI_CTRLR1);
+	let mut xip_spi_ctrlr0 = Register::new(XIP_SSI_SPI_CTRLR0);
+	let mut xip_baudr = Register::new(XIP_SSI_BAUDR);
 
 	// Set QSPI pins to XIP (GPIO_QSPI_SCLK_CTRL ... GPIO_QSPI_SD3_CTRL) simply by clearing to all 0.
 	resets::enable_io_qspi();
@@ -89,26 +90,26 @@ fn enable_xip() { unsafe {
 	const SPI_CTRLR0: u32 = 0 | 0xa0 << 24 | 0x1F << 11 | 0x8 << 2;
 
 	// Disable SSI
-	xip_ssienr.write_volatile(0);
+	xip_ssienr.set(0);
 
 	// Enable cache
-	xip_ctrl.write_volatile(0x1);
+	xip_ctrl.set(0x1);
 
 	// Set baud rate (clock divider)
-	xip_baudr.write_volatile(4);
+	xip_baudr.set(4);
 
 	// Enable XIP with value described above.
-	xip_ctrlr0.write_volatile(CTRLR0);
-	xip_spi_ctrlr0.write_volatile(SPI_CTRLR0);
+	xip_ctrlr0.set(CTRLR0);
+	xip_spi_ctrlr0.set(SPI_CTRLR0);
 
 	// Set NDF -> 0
-	xip_ctrlr1.write_volatile(0);
+	xip_ctrlr1.set(0);
 
 	// Enable SSI
-	xip_ssienr.write_volatile(1);
+	xip_ssienr.set(1);
 
 	// Enable cache (again)
-	xip_ctrl.write_volatile(0x1);
+	xip_ctrl.set(0x1);
 
 	// Test read
 	let _a = (0x1000_0200 as *const u32).read_volatile();
