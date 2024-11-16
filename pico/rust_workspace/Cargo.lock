@@ -24,3 +24,6 @@ version = "0.0.1"
 [[package]]
 name = "stage2"
 version = "0.1.0"
+dependencies = [
+ "pico",
+]
