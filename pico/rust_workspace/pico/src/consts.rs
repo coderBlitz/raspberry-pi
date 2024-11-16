@@ -1,6 +1,18 @@
 #![allow(dead_code)]
 
+pub mod clocks;
 pub mod gpio;
+pub mod psm;
+pub mod resets;
+pub mod xosc;
+
+// Export all constants in one mod for ease of reference.
+pub mod all {
+	pub use super::*;
+	pub use super::gpio::*;
+	pub use super::psm::*;
+	pub use super::resets::*;
+}
 
 /* ROM addresses
 */
@@ -59,7 +71,15 @@ pub const SRAM3_BASE: u32 = 0x2103_0000;
 */
 pub const SYSINFO_BASE: u32 = 0x4000_0000;
 pub const SYSCFG_BASE: u32 = 0x4000_4000;
+
+/* Clock addresses */
 pub const CLOCKS_BASE: u32 = 0x4000_8000;
+pub const CLOCKS_CLK_REF_CTRL: u32 = CLOCKS_BASE + 0x30;
+pub const CLOCKS_CLK_REF_DIV: u32 = CLOCKS_BASE + 0x34;
+pub const CLOCKS_CLK_REF_SELECTED: u32 = CLOCKS_BASE + 0x38;
+pub const CLOCKS_CLK_SYS_CTRL: u32 = CLOCKS_BASE + 0x3C;
+pub const CLOCKS_CLK_SYS_DIV: u32 = CLOCKS_BASE + 0x40;
+pub const CLOCKS_CLK_SYS_SELECTED: u32 = CLOCKS_BASE + 0x44;
 
 /* Resets addresses */
 pub const RESETS_BASE: u32 = 0x4000_C000;
@@ -91,6 +111,11 @@ pub const PADS_BANK0_GPIO25: u32 = PADS_BANK0_BASE + 0x68;
 
 /* Crystal oscillator (XOSC) addresses */
 pub const XOSC_BASE: u32 = 0x4002_4000;
+pub const XOSC_CTRL: u32 = XOSC_BASE;
+pub const XOSC_STATUS: u32 = XOSC_BASE + 0x4;
+pub const XOSC_DORMANT: u32 = XOSC_BASE + 0x8;
+pub const XOSC_STARTUP: u32 = XOSC_BASE + 0xC;
+pub const XOSC_COUNT: u32 = XOSC_BASE + 0x1C;
 
 /* Phase-locked loop (PLL) sys addreses */
 pub const PLL_SYS_BASE: u32 = 0x4002_8000;

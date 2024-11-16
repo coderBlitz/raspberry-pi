@@ -1,0 +1,17 @@
+pub const PSM_PROC1_BIT: u32 = 1 << 16;
+pub const PSM_PROC0_BIT: u32 = 1 << 15;
+pub const PSM_SIO_BIT: u32 = 1 << 14;
+pub const PSM_VRED_AND_CHIP_RESET_BIT: u32 = 1 << 13;
+pub const PSM_XIP_BIT: u32 = 1 << 12;
+pub const PSM_SRAM5_BIT: u32 = 1 << 11;
+pub const PSM_SRAM4_BIT: u32 = 1 << 10;
+pub const PSM_SRAM3_BIT: u32 = 1 << 9;
+pub const PSM_SRAM2_BIT: u32 = 1 << 8;
+pub const PSM_SRAM1_BIT: u32 = 1 << 7;
+pub const PSM_SRAM0_BIT: u32 = 1 << 6;
+pub const PSM_ROM_BIT: u32 = 1 << 5;
+pub const PSM_BUSFABRIC_BIT: u32 = 1 << 4;
+pub const PSM_RESETS_BIT: u32 = 1 << 3;
+pub const PSM_CLOCKS_BIT: u32 = 1 << 2;
+pub const PSM_XOSC_BIT: u32 = 1 << 1;
+pub const PSM_ROSC_BIT: u32 = 1 << 0;
