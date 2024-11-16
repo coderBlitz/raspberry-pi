@@ -22,27 +22,27 @@ impl Gpio {
 		}
 	}
 
-	pub fn use_F0(&self) {
+	pub fn use_f0(&self) {
 		self.0.atomic_bitclear(GPIO_FUNCSEL_BITS);
 		self.0.atomic_bitset(GPIO_F0);
 	}
-	pub fn use_F1(&self) {
+	pub fn use_f1(&self) {
 		self.0.atomic_bitclear(GPIO_FUNCSEL_BITS);
 		self.0.atomic_bitset(GPIO_F1);
 	}
-	pub fn use_F2(&self) {
+	pub fn use_f2(&self) {
 		self.0.atomic_bitclear(GPIO_FUNCSEL_BITS);
 		self.0.atomic_bitset(GPIO_F2);
 	}
-	pub fn use_F3(&self) {
+	pub fn use_f3(&self) {
 		self.0.atomic_bitclear(GPIO_FUNCSEL_BITS);
 		self.0.atomic_bitset(GPIO_F3);
 	}
-	pub fn use_F4(&self) {
+	pub fn use_f4(&self) {
 		self.0.atomic_bitclear(GPIO_FUNCSEL_BITS);
 		self.0.atomic_bitset(GPIO_F4);
 	}
-	pub fn use_F5(&self) {
+	pub fn use_f5(&self) {
 		self.0.atomic_bitclear(GPIO_FUNCSEL_BITS);
 		self.0.atomic_bitset(GPIO_F5);
 	}
