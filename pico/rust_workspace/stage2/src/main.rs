@@ -39,9 +39,14 @@ use pico::{self, consts::*};
 #[no_mangle]
 #[link_section = ".strat"]
 pub extern "C" fn _strat() -> ! {
-	//enable_xip()
+	//enable_xip();
 	//pico::rom::flash_enter_cmd_xip();
 
+	jump_to_entry()
+}
+
+#[inline(always)]
+fn jump_to_entry() -> ! {
 	unsafe {
 		// Set stack address
 		const SADDR: u32 = SRAM5_BASE; // Stack grows down, so this places it in SRAM4.
@@ -62,8 +67,6 @@ pub extern "C" fn _strat() -> ! {
 	}
 }
 
-
-
 /// Yet another attempt to get XIP working. Refer to SPI_notes.md for details.
 ///
 /// The process this time:
@@ -75,7 +78,7 @@ pub extern "C" fn _strat() -> ! {
 /// 5. XIP
 // TODO: Try inserting NOP delays or find status registers to check.
 #[inline(always)]
-fn enable_xip() -> ! { unsafe {
+fn enable_xip() { unsafe {
 	// Make register vars
 	let resets = RESETS_BASE as *mut u32;
 	let resets_done = (RESETS_BASE + 0x8) as *mut u32;
@@ -123,36 +126,6 @@ fn enable_xip() -> ! { unsafe {
 
 	// Enable cache (again)
 	xip_ctrl.write_volatile(0x1);
-
-	// Address for main
-	let main_addr = 0x1000_0100; // Should work because jump into RAM does. Unlikely the issue.
-
-	// Test read.
-	asm!(
-		"mov {r}, {addr}",
-		"ldr {r}, [{r}, #0]",
-		r = out(reg) _,
-		addr = in(reg) main_addr,
-	);
-
-	// Set stack address
-	let saddr = 0x2004_0000;
-	asm!(
-		"mov sp, {saddr}",
-		saddr = in(reg) saddr,
-		options(nomem)
-	);
-
-	for _ in 0..9000 {
-		nop();
-	}
-
-	// Jump to main.
-	asm!(
-		"mov pc, {addr}",
-		addr = in(reg) main_addr,
-		options(noreturn)
-	)
 }}
 
 #[inline(always)]
