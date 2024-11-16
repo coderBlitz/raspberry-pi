@@ -8,6 +8,7 @@
 #![no_std]
 
 pub mod consts;
+pub mod gpio;
 pub mod resets;
 pub mod registers;
 pub mod rom;
