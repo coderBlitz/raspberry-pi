@@ -41,12 +41,9 @@ MEMORY {
 }
 
 ENTRY(_strat)
-/*OUTPUT_FORMAT(binary)*/
-
 SECTIONS {
-	.text ALIGN(256) : {
-		*(.text*)
-	/* } > BOOT2 /* Section when loading stage 2 only */
+	.text ALIGN(4) : {
+		*(.strat)
+		*(.text .text.*)
 	} > CODE /* Section when loading all non-stage 2 code */
-	/* } > SRAM /* Load to RAM */
 }
