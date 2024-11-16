@@ -148,7 +148,7 @@ fn main() {
 
 	// Checksum (data + all zeros)
 	data[252..256].copy_from_slice(&check.to_le_bytes());
-	let offset = 0x1000_0000; // Stage 2 goes to 0x1000_0000, rest goes 0x1000_0100
+	let offset = 0x2000_0000; // Stage 2 goes to 0x1000_0000, rest goes 0x1000_0100
 
 	// Make UF2
 	let out = create_uf2(offset, &data);
