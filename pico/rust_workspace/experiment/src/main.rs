@@ -6,8 +6,29 @@ use core::arch::asm;
 
 
 fn main() {
-	pico::resets::enable_iobank();
+	pico::resets::enable_io_bank0();
+
+	switch_to_xosc();
+
 	flash_led();
+}
+
+fn switch_to_xosc() {
+	/*
+	1. Unreset PLL (SYS)
+	2. Unreset XOSC and wait for startup (~1ms).
+	3. Set reference clock divider (will remain 1)
+	4. Program feedback divisor (PLL.FBDIV_INT)
+	5. Power up PLL main and VCO (PLL.PWR)
+	6. Wait for VCO stability (PLL.CS)
+	7. Configure and power up post dividers (PLL.PRIM)
+	8. Switch ref clock src to XOSC.
+	9. Switch sys clock auxsrc to XOSC or PLL. NOP once or twice.
+
+	For PLL (both ref and sys clocks)
+	A. Switch auxsrc to PLL (note ref can only use USB PLL, sys can use either)
+	B. Switch src to AUX
+	*/
 }
 
 #[inline(always)]
