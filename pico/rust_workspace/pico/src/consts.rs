@@ -74,7 +74,7 @@ pub const PSM_FRCE_OFF: u32 = PSM_BASE + 0x4;
 pub const PSM_WDSEL: u32 = PSM_BASE + 0x8;
 pub const PSM_DONE: u32 = PSM_BASE + 0xC;
 
-/* IO bank addresses */
+/* IO bank addresses (GPIO, etc.) */
 pub const IO_BANK0_BASE: u32 = 0x4001_4000;
 pub const GPIO0_STATUS: u32 = IO_BANK0_BASE + 0x000;
 pub const GPIO0_CTRL: u32 = IO_BANK0_BASE + 0x004;
