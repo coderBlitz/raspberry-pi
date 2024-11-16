@@ -44,7 +44,8 @@ ENTRY(_strat)
 /*OUTPUT_FORMAT(binary)*/
 
 SECTIONS {
-	.text ALIGN(256) : {
+	.text ALIGN(4) : {
+		*(.strat)
 		*(.text*)
 	} > BOOT2 /* Section when loading stage 2 only */
 }

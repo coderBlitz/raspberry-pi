@@ -37,6 +37,7 @@ use pico::{self, consts::*};
   XIP_SSI->SSIENR = XIP_SSI_SSIENR_SSI_EN_Msk;
 */
 #[no_mangle]
+#[link_section = ".strat"]
 pub extern "C" fn _strat() -> ! {
 	//enable_xip()
 	//pico::rom::flash_enter_cmd_xip();
