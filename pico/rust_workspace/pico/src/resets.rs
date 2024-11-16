@@ -9,10 +9,12 @@ macro_rules! impl_resets {
 	{
 		$($name:ident = $bit:expr)*
 	} => { $( paste! {
+		#[inline(always)]
 		pub fn [< enable_ $name >] () {
 			RESETS.atomic_bitclear($bit);
 			while DONE.read() & $bit == 0x0 {}
 		}
+		#[inline(always)]
 		pub fn [< disable_ $name >] () {
 			RESETS.atomic_bitset($bit);
 			while DONE.read() & $bit == 0x1 {}
