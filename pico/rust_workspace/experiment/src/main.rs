@@ -29,6 +29,10 @@ fn switch_to_xosc() {
 	A. Switch auxsrc to PLL (note ref can only use USB PLL, sys can use either)
 	B. Switch src to AUX
 	*/
+	//pico::resets::enable_pll_sys(); // 1
+
+	pico::clocks::enable_xosc();
+	pico::clocks::ref_to_xosc();
 }
 
 #[inline(always)]
