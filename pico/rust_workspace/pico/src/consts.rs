@@ -9,9 +9,11 @@ pub mod xosc;
 // Export all constants in one mod for ease of reference.
 pub mod all {
 	pub use super::*;
+	pub use super::clocks::*;
 	pub use super::gpio::*;
 	pub use super::psm::*;
 	pub use super::resets::*;
+	pub use super::xosc::*;
 }
 
 /* ROM addresses
