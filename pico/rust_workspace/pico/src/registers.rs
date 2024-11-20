@@ -17,7 +17,7 @@ impl Register {
 	}
 
 	#[inline(always)]
-	pub fn set(&mut self, value: u32) {
+	pub fn set(&self, value: u32) {
 		unsafe {
 			self.0.write_volatile(value);
 		}
