@@ -7,6 +7,7 @@
 
 #![no_std]
 
+pub mod clocks;
 pub mod consts;
 pub mod gpio;
 pub mod resets;
