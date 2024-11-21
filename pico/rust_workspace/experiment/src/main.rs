@@ -1,22 +1,36 @@
 #![no_std]
 #![no_main]
 
-use pico;
+use pico::*;
 use core::arch::asm;
 
 
 fn main() {
-	pico::resets::enable_io_bank0();
+	resets::enable_io_bank0();
 
 	// Enable and switch REF and SYS to the XOSC.
-	pico::clocks::enable_xosc();
-	pico::clocks::ref_to_xosc();
+	clocks::enable_xosc();
+	clocks::ref_to_xosc();
 
 	// Enable and configure PLL, then switch SYS to PLL.
-	pico::clocks::configure_pll();
-	pico::clocks::sys_to_pll();
+	clocks::configure_pll();
+	clocks::sys_to_pll();
+
+	// Try things
+	stuff();
 
 	flash_led();
+}
+
+fn stuff() {
+	// Try to get ROM function and see if it's null or not.
+	let code = rom::rom_table_code(b'T', b'3');
+	let ctz: extern "C" fn(u32) -> u32 = rom::func_table_lookup(code);
+
+	if ctz(0) != 32 {
+		//panic!();
+		loop {}
+	}
 }
 
 
@@ -51,7 +65,7 @@ fn flash_led() -> ! {
 
 		// Delay
 		i = 0;
-		while i < 0x50000 {
+		while i < 0x300000 {
 			nop();
 			i += 1;
 		}
@@ -61,7 +75,7 @@ fn flash_led() -> ! {
 
 		// Delay
 		i = 0;
-		while i < 0x50000 {
+		while i < 0x300000 {
 			nop();
 			i += 1;
 		}
