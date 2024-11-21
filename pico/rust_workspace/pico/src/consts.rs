@@ -2,6 +2,7 @@
 
 pub mod clocks;
 pub mod gpio;
+pub mod pll;
 pub mod psm;
 pub mod resets;
 pub mod xosc;
@@ -11,6 +12,7 @@ pub mod all {
 	pub use super::*;
 	pub use super::clocks::*;
 	pub use super::gpio::*;
+	pub use super::pll::*;
 	pub use super::psm::*;
 	pub use super::resets::*;
 	pub use super::xosc::*;
@@ -188,6 +190,10 @@ pub const XOSC_COUNT: u32 = XOSC_BASE + 0x1C;
 
 /* Phase-locked loop (PLL) sys addreses */
 pub const PLL_SYS_BASE: u32 = 0x4002_8000;
+pub const PLL_SYS_CS: u32 = PLL_SYS_BASE;
+pub const PLL_SYS_PWR: u32 = PLL_SYS_BASE + 0x4;
+pub const PLL_SYS_FBDIV_INT: u32 = PLL_SYS_BASE + 0x8;
+pub const PLL_SYS_PRIM: u32 = PLL_SYS_BASE + 0xC;
 
 /* Phase-locked loop (PLL) USB addreses */
 pub const PLL_USB_BASE: u32 = 0x4002_C000;
