@@ -25,8 +25,8 @@ use pico::{
 #[no_mangle]
 #[link_section = ".strat"]
 pub extern "C" fn _strat() -> ! {
-	//enable_xip();
 	//pico::rom::flash_enter_cmd_xip();
+	enable_xip();
 
 	jump_to_entry()
 }
@@ -43,8 +43,8 @@ fn jump_to_entry() -> ! {
 		);
 
 		// Jump to main.
-		//const MAIN_ADDR: u32 = 0x1000_0100; // Flash load (need to get XIP working first)
-		const MAIN_ADDR: u32 = 0x2000_0100; // RAM load
+		const MAIN_ADDR: u32 = 0x1000_0100; // Flash load (need to get XIP working first)
+		//const MAIN_ADDR: u32 = 0x2000_0100; // RAM load
 		asm!(
 			"mov pc, {addr}",
 			addr = in(reg) MAIN_ADDR,
@@ -53,66 +53,38 @@ fn jump_to_entry() -> ! {
 	}
 }
 
-/// Yet another attempt to get XIP working. Refer to SPI_notes.md for details.
+/// Logic copied from bootrom source.
 ///
-/// The process this time:
-/// 1. Check PSM_BASE.DONE register for all needed peripheral's registers.
-/// 2. Un-reset RESETS_BASE for any needed peripherals (SPI, IO, etc.). (TODO: check if this is always before config)
-/// 3. Check RESETS_DONE register for ready status.
-/// 4. Write SSI control register (INST_L = 8 bits, ADDR_L = 24 bits, XIP_CMD = 0x03). May need to disable SSI before config.
-/// 4b. After XIP enabled (should verify with testing first), enable quad read with (INST_L = 0, ADDR_L = 32 bits, XIP_CMD = 0xa0)
-/// 5. XIP
-// TODO: Try inserting NOP delays or find status registers to check.
+/// Documentation pg593 accurate except the "only supported in enhanced modes".
 #[inline(always)]
 fn enable_xip() { unsafe {
 	// Make register vars
-	let mut xip_ssienr = Register::new(XIP_SSI_SSIENR);
-	let mut xip_ctrl = Register::new(XIP_CTRL_BASE);
-	let mut xip_ctrlr0 = Register::new(XIP_SSI_CTRLR0);
-	let mut xip_ctrlr1 = Register::new(XIP_SSI_CTRLR1);
-	let mut xip_spi_ctrlr0 = Register::new(XIP_SSI_SPI_CTRLR0);
-	let mut xip_baudr = Register::new(XIP_SSI_BAUDR);
+	let xip_ssienr = Register::new(XIP_SSI_SSIENR);
+	let xip_ctrl = Register::new(XIP_CTRL_BASE);
+	let xip_ctrlr0 = Register::new(XIP_SSI_CTRLR0);
+	let xip_spi_ctrlr0 = Register::new(XIP_SSI_SPI_CTRLR0);
 
-	// Set QSPI pins to XIP (GPIO_QSPI_SCLK_CTRL ... GPIO_QSPI_SD3_CTRL) simply by clearing to all 0.
-	resets::enable_io_qspi();
-	Gpio::qspi_id(0).use_f0(); // SCLK
-	Gpio::qspi_id(1).use_f0(); // SS
-	Gpio::qspi_id(2).use_f0(); // SD0
-	Gpio::qspi_id(3).use_f0(); // SD1
-	Gpio::qspi_id(4).use_f0(); // SD2
-	Gpio::qspi_id(5).use_f0(); // SD3
+	// Quad-mode (0x2), data frame size 32 bits (0x1F), TMOD EEPROM read (0x3)
+	//const CTRLR0: u32 = 0 | 0x2 << 21 | 31 << 16 | 0x3 << 8; // Quad-read
+	const CTRLR0: u32 = 0 | 0x0 << 21 | 31 << 16 | 0x3 << 8; // Standard read
 
-	// Quad-mode (0x2), data frame size 32 bits (0x1F)
-	const CTRLR0: u32 = 0 | 0x2 << 21 | 0x1F << 16;
-	//
 	// See Pg. 571 and 608
 	// XIP_CMD = 0xa0, WAIT_CYCLES = 31/32 (0x1F) from DFS_32, INST_L = 0, ADDR_L = 32 bits ()
-	const SPI_CTRLR0: u32 = 0 | 0xa0 << 24 | 0x1F << 11 | 0x8 << 2;
-
-	// Disable SSI
-	xip_ssienr.set(0);
+	//const SPI_CTRLR0: u32 = 0 | 0xa0 << 24 | 31 << 11 | 0 << 8 | 0x8 << 2; // Quad-read continuation
+	const SPI_CTRLR0: u32 = 0 | 0x03 << 24 | 31 << 11 | 0x2 << 8 | 0x6 << 2; // Standard 03h
 
 	// Enable cache
 	xip_ctrl.set(0x1);
 
-	// Set baud rate (clock divider)
-	xip_baudr.set(4);
+	// Disable SSI
+	xip_ssienr.set(0);
 
 	// Enable XIP with value described above.
 	xip_ctrlr0.set(CTRLR0);
 	xip_spi_ctrlr0.set(SPI_CTRLR0);
 
-	// Set NDF -> 0
-	xip_ctrlr1.set(0);
-
 	// Enable SSI
 	xip_ssienr.set(1);
-
-	// Enable cache (again)
-	xip_ctrl.set(0x1);
-
-	// Test read
-	let _a = (0x1000_0200 as *const u32).read_volatile();
 }}
 
 #[inline(always)]

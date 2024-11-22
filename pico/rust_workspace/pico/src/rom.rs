@@ -32,5 +32,9 @@ pub fn func_table_lookup<T>(code: u32) -> T {
 pub fn flash_enter_cmd_xip() {
 	let code = rom_table_code(b'C', b'X');
 	let enter_xip: extern "C" fn() = func_table_lookup(code);
+	let code = rom_table_code(b'I', b'F');
+	let connect_flash: extern "C" fn() = func_table_lookup(code);
+
+	connect_flash();
 	enter_xip();
 }
