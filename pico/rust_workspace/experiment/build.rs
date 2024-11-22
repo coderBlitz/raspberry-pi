@@ -1,5 +1,5 @@
 fn main() {
-	println!("cargo::rerun-if-changed=../rammap.ld");
+	println!("cargo::rerun-if-changed=../flashmap.ld");
 	println!("cargo::rustc-link-arg-bins=-T");
-	println!("cargo::rustc-link-arg-bins=rammap.ld");
+	println!("cargo::rustc-link-arg-bins=flashmap.ld");
 }
