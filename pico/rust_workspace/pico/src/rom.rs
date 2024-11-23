@@ -28,7 +28,6 @@ pub fn func_table_lookup<T>(code: u32) -> T {
 	}
 }
 
-// TODO: Try again before more debugging. Fixed get_lookup_fn and fun_table_lookup.
 pub fn flash_enter_cmd_xip() {
 	let code = rom_table_code(b'C', b'X');
 	let enter_xip: extern "C" fn() = func_table_lookup(code);
