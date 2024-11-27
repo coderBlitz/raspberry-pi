@@ -17,8 +17,8 @@ static CLK_SYS_CTRL: Register = unsafe { Register::new(all::CLOCKS_CLK_SYS_CTRL)
 static CLK_SYS_SELECTED: Register = unsafe { Register::new(all::CLOCKS_CLK_SYS_SELECTED) };
 
 pub fn enable_xosc() {
-	// Set startup delay to 10ms to be safe (~470 cycles @ 12MHz)
-	XOSC_STARTUP.set(470);
+	// Minimum cycles is 47, so go with 50 to be slightly safe.
+	XOSC_STARTUP.set(50);
 
 	// Enable XOSC
 	XOSC_CTRL.set(all::XOSC_CTRL_ENABLE_ENABLE);
