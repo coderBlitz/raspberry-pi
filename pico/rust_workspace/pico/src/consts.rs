@@ -1,7 +1,5 @@
 #![allow(dead_code)]
 
-// TODO: Macro to auto-increment constants from base register address.
-
 pub mod clocks;
 pub mod gpio;
 pub mod pll;
