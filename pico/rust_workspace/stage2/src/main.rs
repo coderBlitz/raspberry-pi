@@ -25,8 +25,8 @@ use pico::{
 #[no_mangle]
 #[link_section = ".strat"]
 pub extern "C" fn _strat() -> ! {
-	//pico::rom::flash_enter_cmd_xip();
-	enable_xip();
+	pico::rom::flash_enter_cmd_xip();
+	//enable_xip();
 
 	jump_to_entry()
 }
