@@ -10,11 +10,9 @@
 use core::arch::asm;
 use core::panic::PanicInfo;
 use pico::{
-	self,
 	consts::all::*,
-	gpio::Gpio,
 	registers::Register,
-	resets,
+	rom,
 };
 
 /// The entry function on boot (as defined in picomap.ld)
@@ -25,7 +23,7 @@ use pico::{
 #[no_mangle]
 #[link_section = ".strat"]
 pub extern "C" fn _strat() -> ! {
-	pico::rom::flash_enter_cmd_xip();
+	rom::flash_enter_cmd_xip();
 	//enable_xip();
 
 	jump_to_entry()
@@ -43,7 +41,7 @@ fn jump_to_entry() -> ! {
 		);
 
 		// Jump to main.
-		const MAIN_ADDR: u32 = 0x1000_0100; // Flash load (need to get XIP working first)
+		const MAIN_ADDR: u32 = 0x1000_0100; // Flash load
 		//const MAIN_ADDR: u32 = 0x2000_0100; // RAM load
 		asm!(
 			"mov pc, {addr}",
@@ -70,7 +68,7 @@ fn enable_xip() { unsafe {
 
 	// See Pg. 571 and 608
 	// XIP_CMD = 0xa0, WAIT_CYCLES = 31/32 (0x1F) from DFS_32, INST_L = 0, ADDR_L = 32 bits ()
-	//const SPI_CTRLR0: u32 = 0 | 0xa0 << 24 | 31 << 11 | 0 << 8 | 0x8 << 2; // Quad-read continuation
+	//const SPI_CTRLR0: u32 = 0 | 0xa0 << 24 | 31 << 11 | 0 << 8 | 0x8 << 2; // Quad-read continuation (not working)
 	const SPI_CTRLR0: u32 = 0 | 0x03 << 24 | 31 << 11 | 0x2 << 8 | 0x6 << 2; // Standard 03h
 
 	// Enable cache
