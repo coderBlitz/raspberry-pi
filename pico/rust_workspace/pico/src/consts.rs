@@ -22,6 +22,47 @@ pub mod all {
 	pub use super::xosc::*;
 }
 
+/// Macro to reduce syntax needed to declare a group of register address
+///  constants.
+///
+/// Token-muncher which increments an offset value by 0x4 for every ident
+///  given.
+macro_rules! consts_block {
+	{
+		$base:ident = $addr:literal
+	} => {
+		pub const $base: u32 = $addr;
+	};
+	{
+		$base:ident = $addr:literal
+		$($rem:tt)*
+	} => {
+		consts_block! {
+			$base = $addr
+		}
+		consts_block! {
+			$base
+			0x0 =>
+			$($rem)*
+		}
+	};
+	{
+		$base:ident
+		$offset:expr => $next:ident
+		$($rem:tt)*
+	} => {
+		pub const $next: u32 = $base + $offset;
+		consts_block! {
+			$base
+			$offset + 0x4 => $($rem)*
+		}
+	};
+	{
+		$base:ident
+		$offset:expr =>
+	} => {}; // Leftover
+}
+
 /* ROM addresses
 */
 pub const ROM_BASE: u32 = 0x0000_0000;
@@ -90,114 +131,137 @@ pub const CLOCKS_CLK_SYS_DIV: u32 = CLOCKS_BASE + 0x40;
 pub const CLOCKS_CLK_SYS_SELECTED: u32 = CLOCKS_BASE + 0x44;
 
 /* Resets addresses */
-pub const RESETS_BASE: u32 = 0x4000_C000;
-pub const RESETS_RESET: u32 = RESETS_BASE + 0x0;
-pub const RESETS_WDSEL: u32 = RESETS_BASE + 0x4;
-pub const RESETS_RESET_DONE: u32 = RESETS_BASE + 0x8;
+consts_block! {
+	RESETS_BASE = 0x4000_C000
+	RESETS_RESET
+	RESETS_WDSEL
+	RESETS_RESET_DONE
+}
 
 /* Power-on state machine (PSM) addresses */
-pub const PSM_BASE: u32 = 0x4001_0000;
-pub const PSM_FRCE_ON: u32 = PSM_BASE + 0x0;
-pub const PSM_FRCE_OFF: u32 = PSM_BASE + 0x4;
-pub const PSM_WDSEL: u32 = PSM_BASE + 0x8;
-pub const PSM_DONE: u32 = PSM_BASE + 0xC;
+consts_block! {
+	PSM_BASE = 0x4001_0000
+	PSM_FRCE_ON
+	PSM_FRCE_OFF
+	PSM_WDSEL
+	PSM_DONE
+}
 
 /* IO bank addresses (GPIO, etc.) */
-pub const IO_BANK0_BASE: u32 = 0x4001_4000;
-pub const GPIO0_STATUS: u32 = IO_BANK0_BASE + 0x000;
-pub const GPIO0_CTRL: u32 = IO_BANK0_BASE + 0x004;
-pub const GPIO1_STATUS: u32 = IO_BANK0_BASE + 0x008;
-pub const GPIO1_CTRL: u32 = IO_BANK0_BASE + 0x00C;
-pub const GPIO2_STATUS: u32 = IO_BANK0_BASE + 0x010;
-pub const GPIO2_CTRL: u32 = IO_BANK0_BASE + 0x014;
-pub const GPIO3_STATUS: u32 = IO_BANK0_BASE + 0x018;
-pub const GPIO3_CTRL: u32 = IO_BANK0_BASE + 0x01C;
-pub const GPIO4_STATUS: u32 = IO_BANK0_BASE + 0x020;
-pub const GPIO4_CTRL: u32 = IO_BANK0_BASE + 0x024;
-pub const GPIO5_STATUS: u32 = IO_BANK0_BASE + 0x028;
-pub const GPIO5_CTRL: u32 = IO_BANK0_BASE + 0x02C;
-pub const GPIO6_STATUS: u32 = IO_BANK0_BASE + 0x030;
-pub const GPIO6_CTRL: u32 = IO_BANK0_BASE + 0x034;
-pub const GPIO7_STATUS: u32 = IO_BANK0_BASE + 0x038;
-pub const GPIO7_CTRL: u32 = IO_BANK0_BASE + 0x03C;
-pub const GPIO8_STATUS: u32 = IO_BANK0_BASE + 0x040;
-pub const GPIO8_CTRL: u32 = IO_BANK0_BASE + 0x044;
-pub const GPIO9_STATUS: u32 = IO_BANK0_BASE + 0x048;
-pub const GPIO9_CTRL: u32 = IO_BANK0_BASE + 0x04C;
-pub const GPIO10_STATUS: u32 = IO_BANK0_BASE + 0x050;
-pub const GPIO10_CTRL: u32 = IO_BANK0_BASE + 0x054;
-pub const GPIO11_STATUS: u32 = IO_BANK0_BASE + 0x058;
-pub const GPIO11_CTRL: u32 = IO_BANK0_BASE + 0x05C;
-pub const GPIO12_STATUS: u32 = IO_BANK0_BASE + 0x060;
-pub const GPIO12_CTRL: u32 = IO_BANK0_BASE + 0x064;
-pub const GPIO13_STATUS: u32 = IO_BANK0_BASE + 0x068;
-pub const GPIO13_CTRL: u32 = IO_BANK0_BASE + 0x06C;
-pub const GPIO14_STATUS: u32 = IO_BANK0_BASE + 0x070;
-pub const GPIO14_CTRL: u32 = IO_BANK0_BASE + 0x074;
-pub const GPIO15_STATUS: u32 = IO_BANK0_BASE + 0x078;
-pub const GPIO15_CTRL: u32 = IO_BANK0_BASE + 0x07C;
-pub const GPIO16_STATUS: u32 = IO_BANK0_BASE + 0x080;
-pub const GPIO16_CTRL: u32 = IO_BANK0_BASE + 0x084;
-pub const GPIO17_STATUS: u32 = IO_BANK0_BASE + 0x088;
-pub const GPIO17_CTRL: u32 = IO_BANK0_BASE + 0x08C;
-pub const GPIO18_STATUS: u32 = IO_BANK0_BASE + 0x090;
-pub const GPIO18_CTRL: u32 = IO_BANK0_BASE + 0x094;
-pub const GPIO19_STATUS: u32 = IO_BANK0_BASE + 0x098;
-pub const GPIO19_CTRL: u32 = IO_BANK0_BASE + 0x09C;
-pub const GPIO20_STATUS: u32 = IO_BANK0_BASE + 0x0A0;
-pub const GPIO20_CTRL: u32 = IO_BANK0_BASE + 0x0A4;
-pub const GPIO21_STATUS: u32 = IO_BANK0_BASE + 0x0A8;
-pub const GPIO21_CTRL: u32 = IO_BANK0_BASE + 0x0AC;
-pub const GPIO22_STATUS: u32 = IO_BANK0_BASE + 0x0B0;
-pub const GPIO22_CTRL: u32 = IO_BANK0_BASE + 0x0B4;
-pub const GPIO23_STATUS: u32 = IO_BANK0_BASE + 0x0B8;
-pub const GPIO23_CTRL: u32 = IO_BANK0_BASE + 0x0BC;
-pub const GPIO24_STATUS: u32 = IO_BANK0_BASE + 0x0C0;
-pub const GPIO24_CTRL: u32 = IO_BANK0_BASE + 0x0C4;
-pub const GPIO25_STATUS: u32 = IO_BANK0_BASE + 0x0C8;
-pub const GPIO25_CTRL: u32 = IO_BANK0_BASE + 0x0CC; // LED pin
-pub const GPIO26_STATUS: u32 = IO_BANK0_BASE + 0x0D0;
-pub const GPIO26_CTRL: u32 = IO_BANK0_BASE + 0x0D4;
-pub const GPIO27_STATUS: u32 = IO_BANK0_BASE + 0x0D8;
-pub const GPIO27_CTRL: u32 = IO_BANK0_BASE + 0x0DC;
-pub const GPIO28_STATUS: u32 = IO_BANK0_BASE + 0x0E0;
-pub const GPIO28_CTRL: u32 = IO_BANK0_BASE + 0x0E4;
-pub const GPIO29_STATUS: u32 = IO_BANK0_BASE + 0x0E8;
-pub const GPIO29_CTRL: u32 = IO_BANK0_BASE + 0x0EC;
+consts_block! {
+	IO_BANK0_BASE = 0x4001_4000
+	GPIO0_STATUS
+	GPIO0_CTRL
+	GPIO1_STATUS
+	GPIO1_CTRL
+	GPIO2_STATUS
+	GPIO2_CTRL
+	GPIO3_STATUS
+	GPIO3_CTRL
+	GPIO4_STATUS
+	GPIO4_CTRL
+	GPIO5_STATUS
+	GPIO5_CTRL
+	GPIO6_STATUS
+	GPIO6_CTRL
+	GPIO7_STATUS
+	GPIO7_CTRL
+	GPIO8_STATUS
+	GPIO8_CTRL
+	GPIO9_STATUS
+	GPIO9_CTRL
+	GPIO10_STATUS
+	GPIO10_CTRL
+	GPIO11_STATUS
+	GPIO11_CTRL
+	GPIO12_STATUS
+	GPIO12_CTRL
+	GPIO13_STATUS
+	GPIO13_CTRL
+	GPIO14_STATUS
+	GPIO14_CTRL
+	GPIO15_STATUS
+	GPIO15_CTRL
+	GPIO16_STATUS
+	GPIO16_CTRL
+	GPIO17_STATUS
+	GPIO17_CTRL
+	GPIO18_STATUS
+	GPIO18_CTRL
+	GPIO19_STATUS
+	GPIO19_CTRL
+	GPIO20_STATUS
+	GPIO20_CTRL
+	GPIO21_STATUS
+	GPIO21_CTRL
+	GPIO22_STATUS
+	GPIO22_CTRL
+	GPIO23_STATUS
+	GPIO23_CTRL
+	GPIO24_STATUS
+	GPIO24_CTRL
+	GPIO25_STATUS
+	GPIO25_CTRL
+	GPIO26_STATUS
+	GPIO26_CTRL
+	GPIO27_STATUS
+	GPIO27_CTRL
+	GPIO28_STATUS
+	GPIO28_CTRL
+	GPIO29_STATUS
+	GPIO29_CTRL
+}
 
 /* IO QSPI addresses */
-pub const IO_QSPI_BASE: u32 = 0x4001_8000;
-pub const GPIO_QSPI_SCLK_STATUS: u32 = IO_QSPI_BASE + 0x000;
-pub const GPIO_QSPI_SCLK_CTRL: u32 = IO_QSPI_BASE + 0x004;
-pub const GPIO_QSPI_SS_STATUS: u32 = IO_QSPI_BASE + 0x008;
-pub const GPIO_QSPI_SS_CTRL: u32 = IO_QSPI_BASE + 0x00C;
-pub const GPIO_QSPI_SD0_STATUS: u32 = IO_QSPI_BASE + 0x010;
-pub const GPIO_QSPI_SD0_CTRL: u32 = IO_QSPI_BASE + 0x014;
-pub const GPIO_QSPI_SD1_STATUS: u32 = IO_QSPI_BASE + 0x018;
-pub const GPIO_QSPI_SD1_CTRL: u32 = IO_QSPI_BASE + 0x01C;
-pub const GPIO_QSPI_SD2_STATUS: u32 = IO_QSPI_BASE + 0x020;
-pub const GPIO_QSPI_SD2_CTRL: u32 = IO_QSPI_BASE + 0x024;
-pub const GPIO_QSPI_SD3_STATUS: u32 = IO_QSPI_BASE + 0x028;
-pub const GPIO_QSPI_SD3_CTRL: u32 = IO_QSPI_BASE + 0x02C;
+consts_block! {
+	IO_QSPI_BASE = 0x4001_8000
+	GPIO_QSPI_SCLK_STATUS
+	GPIO_QSPI_SCLK_CTRL
+	GPIO_QSPI_SS_STATUS
+	GPIO_QSPI_SS_CTRL
+	GPIO_QSPI_SD0_STATUS
+	GPIO_QSPI_SD0_CTRL
+	GPIO_QSPI_SD1_STATUS
+	GPIO_QSPI_SD1_CTRL
+	GPIO_QSPI_SD2_STATUS
+	GPIO_QSPI_SD2_CTRL
+	GPIO_QSPI_SD3_STATUS
+	GPIO_QSPI_SD3_CTRL
+	INTR
+	PROC0_INTE
+	PROC0_INTF
+	PROC0_INTS
+	PROC1_INTE
+	PROC1_INTF
+	PROC1_INTS
+	DORMANT_WAKE_INTE
+	DORMANT_WAKE_INTF
+	DORMANT_WAKE_INTS
+}
+
 
 /* Pads IO bank addresses */
 pub const PADS_BANK0_BASE: u32 = 0x4001_C000;
 pub const PADS_BANK0_GPIO25: u32 = PADS_BANK0_BASE + 0x68;
 
 /* Crystal oscillator (XOSC) addresses */
-pub const XOSC_BASE: u32 = 0x4002_4000;
-pub const XOSC_CTRL: u32 = XOSC_BASE;
-pub const XOSC_STATUS: u32 = XOSC_BASE + 0x4;
-pub const XOSC_DORMANT: u32 = XOSC_BASE + 0x8;
-pub const XOSC_STARTUP: u32 = XOSC_BASE + 0xC;
+consts_block! {
+	XOSC_BASE = 0x4002_4000
+	XOSC_CTRL
+	XOSC_STATUS
+	XOSC_DORMANT
+	XOSC_STARTUP
+}
 pub const XOSC_COUNT: u32 = XOSC_BASE + 0x1C;
 
 /* Phase-locked loop (PLL) sys addreses */
-pub const PLL_SYS_BASE: u32 = 0x4002_8000;
-pub const PLL_SYS_CS: u32 = PLL_SYS_BASE;
-pub const PLL_SYS_PWR: u32 = PLL_SYS_BASE + 0x4;
-pub const PLL_SYS_FBDIV_INT: u32 = PLL_SYS_BASE + 0x8;
-pub const PLL_SYS_PRIM: u32 = PLL_SYS_BASE + 0xC;
+consts_block! {
+	PLL_SYS_BASE = 0x4002_8000
+	PLL_SYS_CS
+	PLL_SYS_PWR
+	PLL_SYS_FBDIV_INT
+	PLL_SYS_PRIM
+}
 
 /* Phase-locked loop (PLL) USB addreses */
 pub const PLL_USB_BASE: u32 = 0x4002_C000;
@@ -227,19 +291,21 @@ pub const PWM_BASE: u32 = 0x4005_0000;
 pub const TIMER_BASE: u32 = 0x4005_4000;
 
 /* Watchdog addresses */
-pub const WATCHDOG_BASE: u32 = 0x4005_8000;
-pub const WATCHDOG_CTRL: u32 = WATCHDOG_BASE;
-pub const WATCHDOG_LOAD: u32 = WATCHDOG_BASE + 0x4;
-pub const WATCHDOG_REASON: u32 = WATCHDOG_BASE + 0x8;
-pub const WATCHDOG_SCRATCH0: u32 = WATCHDOG_BASE + 0xC;
-pub const WATCHDOG_SCRATCH1: u32 = WATCHDOG_BASE + 0x10;
-pub const WATCHDOG_SCRATCH2: u32 = WATCHDOG_BASE + 0x14;
-pub const WATCHDOG_SCRATCH3: u32 = WATCHDOG_BASE + 0x18;
-pub const WATCHDOG_SCRATCH4: u32 = WATCHDOG_BASE + 0x1C;
-pub const WATCHDOG_SCRATCH5: u32 = WATCHDOG_BASE + 0x20;
-pub const WATCHDOG_SCRATCH6: u32 = WATCHDOG_BASE + 0x24;
-pub const WATCHDOG_SCRATCH7: u32 = WATCHDOG_BASE + 0x28;
-pub const WATCHDOG_TICK: u32 = WATCHDOG_BASE + 0x2C;
+consts_block! {
+	WATCHDOG_BASE = 0x4005_8000
+	WATCHDOG_CTRL
+	WATCHDOG_LOAD
+	WATCHDOG_REASON
+	WATCHDOG_SCRATCH0
+	WATCHDOG_SCRATCH1
+	WATCHDOG_SCRATCH2
+	WATCHDOG_SCRATCH3
+	WATCHDOG_SCRATCH4
+	WATCHDOG_SCRATCH5
+	WATCHDOG_SCRATCH6
+	WATCHDOG_SCRATCH7
+	WATCHDOG_TICK
+}
 
 /* RTC addresses */
 pub const RTC_BASE: u32 = 0x4005_C000;
