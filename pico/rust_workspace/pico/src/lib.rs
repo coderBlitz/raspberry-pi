@@ -13,3 +13,6 @@ pub mod gpio;
 pub mod resets;
 pub mod registers;
 pub mod rom;
+pub mod watchdog;
+
+pub use registers::Register;

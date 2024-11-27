@@ -1,10 +1,13 @@
 #![allow(dead_code)]
 
+// TODO: Macro to auto-increment constants from base register address.
+
 pub mod clocks;
 pub mod gpio;
 pub mod pll;
 pub mod psm;
 pub mod resets;
+pub mod watchdog;
 pub mod xosc;
 
 // Export all constants in one mod for ease of reference.
@@ -15,6 +18,7 @@ pub mod all {
 	pub use super::pll::*;
 	pub use super::psm::*;
 	pub use super::resets::*;
+	pub use super::watchdog::*;
 	pub use super::xosc::*;
 }
 
@@ -224,6 +228,18 @@ pub const TIMER_BASE: u32 = 0x4005_4000;
 
 /* Watchdog addresses */
 pub const WATCHDOG_BASE: u32 = 0x4005_8000;
+pub const WATCHDOG_CTRL: u32 = WATCHDOG_BASE;
+pub const WATCHDOG_LOAD: u32 = WATCHDOG_BASE + 0x4;
+pub const WATCHDOG_REASON: u32 = WATCHDOG_BASE + 0x8;
+pub const WATCHDOG_SCRATCH0: u32 = WATCHDOG_BASE + 0xC;
+pub const WATCHDOG_SCRATCH1: u32 = WATCHDOG_BASE + 0x10;
+pub const WATCHDOG_SCRATCH2: u32 = WATCHDOG_BASE + 0x14;
+pub const WATCHDOG_SCRATCH3: u32 = WATCHDOG_BASE + 0x18;
+pub const WATCHDOG_SCRATCH4: u32 = WATCHDOG_BASE + 0x1C;
+pub const WATCHDOG_SCRATCH5: u32 = WATCHDOG_BASE + 0x20;
+pub const WATCHDOG_SCRATCH6: u32 = WATCHDOG_BASE + 0x24;
+pub const WATCHDOG_SCRATCH7: u32 = WATCHDOG_BASE + 0x28;
+pub const WATCHDOG_TICK: u32 = WATCHDOG_BASE + 0x2C;
 
 /* RTC addresses */
 pub const RTC_BASE: u32 = 0x4005_C000;
