@@ -64,5 +64,5 @@ pub fn sys_to_pll() {
 	CLK_SYS_CTRL.atomic_bitset(all::CLOCKS_CLK_SYS_CTRL_SRC_BIT);
 
 	// Wait for switch
-	while CLK_REF_SELECTED.get() == 0 {}
+	while CLK_SYS_SELECTED.get() == 0 {}
 }
