@@ -55,6 +55,18 @@ macro_rules! consts_block {
 			$offset + 0x4 => $($rem)*
 		}
 	};
+	// If desired to skip, use `#[skip]` to skip the next increment or
+	//  `#[skip = N]` to skip the next N increments.
+	{
+		$base:ident
+		$offset:expr => #[skip $(= $times:literal)?]
+		$($rem:tt)*
+	} => {
+		consts_block! {
+			$base
+			$offset + 0x4 $(* $times)? => $($rem)*
+		}
+	};
 	{
 		$base:ident
 		$offset:expr =>
@@ -407,6 +419,7 @@ consts_block! {
 	SIO_CPUID
 	SIO_GPIO_IN
 	SIO_GPIO_HI_IN
+	#[skip]
 	SIO_GPIO_OUT
 	SIO_GPIO_OUT_SET
 	SIO_GPIO_OUT_CLR
