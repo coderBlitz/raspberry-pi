@@ -16,6 +16,9 @@ fn main() {
 	clocks::configure_pll();
 	clocks::sys_to_pll();
 
+	// Start the tick for timing purposes.
+	watchdog::start_tick();
+
 	// Try things
 	stuff();
 
@@ -29,6 +32,11 @@ fn stuff() {
 
 	if ctz(0) != 32 {
 		//panic!();
+		loop {}
+	}
+
+	// Test the unsigned division function
+	if (ctz(0) / 6) != 5 {
 		loop {}
 	}
 }
@@ -88,6 +96,7 @@ fn nop() {
 		asm!("NOP", options(nomem, nostack));
 	}
 }
+
 #[no_mangle]
 #[link_section = ".strat"]
 pub extern "C" fn _strat() -> ! {
