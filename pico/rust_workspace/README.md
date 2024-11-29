@@ -26,9 +26,8 @@ Just calls the ROM functions to connect flash and enable XIP.
    unique linker section with linker-defined symbols that mark the start and
    end of this section, then use code to copy the address range to wherever in
    RAM. Every function that goes in section (#\[link_section\]) will be loaded
-   into RAM. CAUTION: Any branching/jumping performed by the function could
-   cause a crash/hang due to the destination potentially being outside this RAM
-   address range.
+   into RAM. If the RAM linker section is placed to be at a known segment of
+   RAM, any jumps to/from it _should_ be properly addressed. Needs testing.
 
 [1]: https://github.com/rp-rs/rp-hal/blob/main/rp2040-hal/src/float/div.rs
 [2]: https://gcc.gnu.org/onlinedocs/gccint/Soft-float-library-routines.html
