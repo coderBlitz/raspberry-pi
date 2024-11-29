@@ -1,10 +1,12 @@
 [workspace]
 resolver = "2"
 members = [
-	"pico_alloc",
+	#"pico_alloc",
 	"stage2",
-	"simple"
-, "experiment", "pico"]
+	"simple",
+	"experiment",
+	"pico",
+]
 
 [profile.dev]
 strip = "none"
