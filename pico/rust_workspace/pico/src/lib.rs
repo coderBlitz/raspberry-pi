@@ -14,6 +14,7 @@ pub use registers::Register;
 pub mod clocks;
 pub mod consts;
 pub mod gpio;
+pub mod proc;
 pub mod resets;
 pub mod registers;
 pub mod rom;
