@@ -25,6 +25,7 @@ use pico::{
 pub extern "C" fn _strat() -> ! {
 	rom::flash_enter_cmd_xip();
 	//enable_xip();
+	//xip_qspi();
 
 	jump_to_entry()
 }
@@ -62,13 +63,8 @@ fn enable_xip() { unsafe {
 	let xip_ctrlr0 = Register::new(XIP_SSI_CTRLR0);
 	let xip_spi_ctrlr0 = Register::new(XIP_SSI_SPI_CTRLR0);
 
-	// Quad-mode (0x2), data frame size 32 bits (0x1F), TMOD EEPROM read (0x3)
-	//const CTRLR0: u32 = 0 | 0x2 << 21 | 31 << 16 | 0x3 << 8; // Quad-read
 	const CTRLR0: u32 = 0 | 0x0 << 21 | 31 << 16 | 0x3 << 8; // Standard read
 
-	// See Pg. 571 and 608
-	// XIP_CMD = 0xa0, WAIT_CYCLES = 31/32 (0x1F) from DFS_32, INST_L = 0, ADDR_L = 32 bits ()
-	//const SPI_CTRLR0: u32 = 0 | 0xa0 << 24 | 31 << 11 | 0 << 8 | 0x8 << 2; // Quad-read continuation (not working)
 	const SPI_CTRLR0: u32 = 0 | 0x03 << 24 | 31 << 11 | 0x2 << 8 | 0x6 << 2; // Standard 03h
 
 	// Enable cache
@@ -84,6 +80,32 @@ fn enable_xip() { unsafe {
 	// Enable SSI
 	xip_ssienr.set(1);
 }}
+
+// Should enable QSPI, but no noticeable change for simple blink LED. Perhaps
+//  it's all in cache so it's not noticeable?
+// Needs testing with larger program
+#[inline(always)]
+fn xip_qspi() {
+	// Read some bytes to ensure XIP has been properly enabled
+	for i in 0..8 { unsafe {
+		_ = (0x1000_0000 as *const u32).add(i).read_volatile();
+	}}
+
+	// Make register vars
+	let xip_ctrlr0 = unsafe { Register::new(XIP_SSI_CTRLR0) };
+	let xip_spi_ctrlr0 = unsafe { Register::new(XIP_SSI_SPI_CTRLR0) };
+
+	// Quad-mode (0x2), data frame size 32 bits (0x1F), TMOD EEPROM read (0x3)
+	const CTRLR0: u32 = 0 | 0x2 << 21 | 31 << 16 | 0x3 << 8; // Quad-read
+
+	// See Pg. 571 and 608
+	// XIP_CMD = 0xa0, WAIT_CYCLES = 31/32 (0x1F) from DFS_32, INST_L = 0, ADDR_L = 32 bits ()
+	const SPI_CTRLR0: u32 = 0 | 0xa0 << 24 | 31 << 11 | 0 << 8 | 0x8 << 2; // Quad-read continuation (not working)
+
+	// Enable XIP with value described above.
+	xip_ctrlr0.set(CTRLR0);
+	xip_spi_ctrlr0.set(SPI_CTRLR0);
+}
 
 #[inline(always)]
 fn nop() {
