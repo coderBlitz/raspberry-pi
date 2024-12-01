@@ -14,7 +14,7 @@ impl Instant {
 	}
 
 	pub fn elapsed(&self) -> Duration {
-		Duration::from_millis(self.0)
+		Duration::from_micros(get_time_us() - self.0)
 	}
 }
 
@@ -44,9 +44,11 @@ fn get_time_us() -> u64 {
 // TODO: Utilize WFI to sleep until interrupt. SysTick, Alarm, etc. can
 //        generate the waking interrupt.
 pub fn sleep(dur: Duration) {
-	// TODO:
-	// 1. Arm interrupt however
-	// 2. Use WFI to sleep
-	// 3. Upon waking, check elapsed duration and WFI again if short.
-	// 4. Else done.
+	let now = Instant::now();
+	while now.elapsed() < dur {
+		// TODO:
+		// 1. Arm interrupt however
+		// 2. Use WFI
+		crate::nop();
+	}
 }
