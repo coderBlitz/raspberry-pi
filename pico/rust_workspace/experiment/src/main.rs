@@ -83,13 +83,6 @@ fn flash_led() -> ! {
 	}
 }
 
-#[inline(always)]
-fn nop() {
-	unsafe {
-		asm!("NOP", options(nomem, nostack));
-	}
-}
-
 #[no_mangle]
 #[link_section = ".strat"]
 pub extern "C" fn _strat() -> ! {
