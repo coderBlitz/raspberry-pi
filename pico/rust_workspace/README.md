@@ -28,6 +28,8 @@ Just calls the ROM functions to connect flash and enable XIP.
    RAM. Every function that goes in section (#\[link_section\]) will be loaded
    into RAM. If the RAM linker section is placed to be at a known segment of
    RAM, any jumps to/from it _should_ be properly addressed. Needs testing.
+* Vector table offset register is the _high_ 24 bits of the table address, so
+   the table itself must be aligned to 256 bits.
 
 [1]: https://github.com/rp-rs/rp-hal/blob/main/rp2040-hal/src/float/div.rs
 [2]: https://gcc.gnu.org/onlinedocs/gccint/Soft-float-library-routines.html
