@@ -3,7 +3,7 @@
 
 use pico::*;
 use core::arch::asm;
-
+use core::time::Duration;
 
 fn main() {
 	resets::enable_io_bank0();
@@ -65,28 +65,21 @@ fn flash_led() -> ! {
 
 	set_led(false);
 
+	let sleep_time = Duration::from_secs(1);
+
 	// End state is infinite loop
-	let mut i: usize;
 	loop {
 		// Turn LED OFF
 		set_led(true);
 
 		// Delay
-		i = 0;
-		while i < 0x300000 {
-			nop();
-			i += 1;
-		}
+		timer::sleep(sleep_time);
 
 		// Turn LED ON
 		set_led(false);
 
 		// Delay
-		i = 0;
-		while i < 0x300000 {
-			nop();
-			i += 1;
-		}
+		timer::sleep(sleep_time);
 	}
 }
 
