@@ -16,6 +16,7 @@ static CLK_REF_SELECTED: Register = unsafe { Register::new(all::CLOCKS_CLK_REF_S
 static CLK_SYS_CTRL: Register = unsafe { Register::new(all::CLOCKS_CLK_SYS_CTRL) };
 static CLK_SYS_SELECTED: Register = unsafe { Register::new(all::CLOCKS_CLK_SYS_SELECTED) };
 
+/// Enable the crystal oscillator (XOSC) and wait for it to stablize.
 pub fn enable_xosc() {
 	// Minimum cycles is 47, so go with 50 to be slightly safe.
 	XOSC_STARTUP.set(50);
@@ -30,6 +31,7 @@ pub fn enable_xosc() {
 	while XOSC_STATUS.get() & XOSC_STATUS_STABLE_BIT == 0 {}
 }
 
+/// Switch the reference clock to use the XOSC instead of the ROSC.
 pub fn ref_to_xosc() {
 	// Switch ref
 	CLK_REF_CTRL.set(CLOCKS_CLK_REF_CTRL_SRC_XOSC_CLKSRC);
@@ -38,6 +40,7 @@ pub fn ref_to_xosc() {
 	while CLK_REF_SELECTED.get() == 0 {}
 }
 
+/// Configure the SYS PLL for use as the system clock.
 pub fn configure_pll() {
 	// FBDIV 133
 	// POSTDIV1 6 x POSTDIV2 2 = 12 POSTDIV
@@ -55,6 +58,7 @@ pub fn configure_pll() {
 	PLL_SYS_PRIM.set(6 << all::PLL_SYS_PRIM_POSTDIV1_SHIFT | 2 << all::PLL_SYS_PRIM_POSTDIV2_SHIFT);
 }
 
+/// Switch the system clock to use the SYS PLL.
 pub fn sys_to_pll() {
 	// Set SYS AUX to PLL
 	CLK_SYS_CTRL.atomic_bitclear(all::CLOCKS_CLK_SYS_CTRL_AUXSRC_BITS);
