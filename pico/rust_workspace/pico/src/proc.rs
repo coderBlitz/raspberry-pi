@@ -1,28 +1,39 @@
 //! Processor subsystem
 //!
 
+use crate::Register;
+use crate::consts::*;
 use core::arch::asm;
 
+static CPUID: Register = unsafe { Register::new(SIO_CPUID) };
+static VTOR: Register = unsafe { Register::new(PPB_VTOR) };
+
 /// Wait-for-interrupt (WFI).
-fn wfi() { unsafe {
+pub fn wfi() { unsafe {
 	asm!("wfi", options(nomem, nostack));
 }}
 
 /// Wait-for-event (WFE).
-fn wfe() { unsafe {
+pub fn wfe() { unsafe {
 	asm!("wfe", options(nomem, nostack));
 }}
 
 /// Send event (SEV).
-fn sev() { unsafe {
+pub fn sev() { unsafe {
 	asm!("sev", options(nomem, nostack));
 }}
 
-// TODO: NVIC stuff
-#[repr(align(64))]
-struct NvicTable {
-	vec_tbl: [u32; 48],
+pub fn cpu_id() -> u32 {
+	CPUID.get()
 }
+
+pub fn replace_nvic_table() {
+	VTOR.set(&raw const NVIC_STUFF as u32);
+}
+
+// TODO: NVIC stuff
+#[repr(align(256))]
+struct NvicTable([u32; 48]);
 
 // Exception numbers (pg 192 ARMv6-M ARM):
 // 1 - Reset
@@ -40,8 +51,8 @@ struct NvicTable {
 // Exception stack pointer plus exception addresses. High bit must be set on
 //  all entries otherwise first instruction causes HardFault.
 // TODO: Utilize handler pointers from ROM for reset, NMI, and hard fault.
-static mut NVIC_STUFF: NvicTable = NvicTable {
-	vec_tbl: [
+static mut NVIC_STUFF: NvicTable = NvicTable (
+	[
 		0x2004_0000, // SP_main (just use top of SRAM for now)
 		0x8000_0000, // Reset
 		0x8000_0000, // NMI
@@ -91,4 +102,4 @@ static mut NVIC_STUFF: NvicTable = NvicTable {
 		0x8000_0000, // (external 30)
 		0x8000_0000, // (external 31)
 	]
-};
+);
