@@ -2,7 +2,6 @@
 #![no_main]
 
 use pico::*;
-use core::arch::asm;
 use core::time::Duration;
 
 fn main() {
@@ -44,14 +43,14 @@ fn stuff() {
 
 #[inline(always)]
 fn set_led(on: bool) {
-	let pin25_ctrl = pico::consts::GPIO25_CTRL as *mut u32;
+	let pin25_ctrl = unsafe { Register::new(pico::consts::GPIO25_CTRL) };
 	const LED_PIN_STATE_ON: u32 = 0x0000_3305;
 	const LED_PIN_STATE_OFF: u32 = 0x0000_3205;
 
 	if on {
-		unsafe { pin25_ctrl.write_volatile(LED_PIN_STATE_ON); }
+		pin25_ctrl.set(LED_PIN_STATE_ON);
 	} else {
-		unsafe { pin25_ctrl.write_volatile(LED_PIN_STATE_OFF); }
+		pin25_ctrl.set(LED_PIN_STATE_OFF);
 	}
 }
 
