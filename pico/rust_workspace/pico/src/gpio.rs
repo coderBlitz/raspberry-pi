@@ -61,6 +61,17 @@ pub enum QspiPin {
 	Sd3,
 }
 
+#[derive(Clone, Copy, Eq, PartialEq)]
+#[repr(u32)]
+pub enum GpioFn {
+	Fn0 = GPIO_CTRL_F0,
+	Fn1 = GPIO_CTRL_F1,
+	Fn2 = GPIO_CTRL_F2,
+	Fn3 = GPIO_CTRL_F3,
+	Fn4 = GPIO_CTRL_F4,
+	Fn5 = GPIO_CTRL_F5,
+}
+
 /// Represents a GPIO pin.
 // Stored value is the address of the STATUS register, CTRL is +4. Pad control
 //  is PADS_BANK0_BASE + id*4.
@@ -90,29 +101,9 @@ impl Gpio {
 	}
 
 	/* Function selects */
-	pub fn use_f0(&self) {
+	pub fn select_fn(&self, fun: GpioFn) {
 		self.0.atomic_bitclear(IO_BANK0_GPIO_CTRL_FUNCSEL_BITS);
-		self.0.atomic_bitset(GPIO_CTRL_F0);
-	}
-	pub fn use_f1(&self) {
-		self.0.atomic_bitclear(IO_BANK0_GPIO_CTRL_FUNCSEL_BITS);
-		self.0.atomic_bitset(GPIO_CTRL_F1);
-	}
-	pub fn use_f2(&self) {
-		self.0.atomic_bitclear(IO_BANK0_GPIO_CTRL_FUNCSEL_BITS);
-		self.0.atomic_bitset(GPIO_CTRL_F2);
-	}
-	pub fn use_f3(&self) {
-		self.0.atomic_bitclear(IO_BANK0_GPIO_CTRL_FUNCSEL_BITS);
-		self.0.atomic_bitset(GPIO_CTRL_F3);
-	}
-	pub fn use_f4(&self) {
-		self.0.atomic_bitclear(IO_BANK0_GPIO_CTRL_FUNCSEL_BITS);
-		self.0.atomic_bitset(GPIO_CTRL_F4);
-	}
-	pub fn use_f5(&self) {
-		self.0.atomic_bitclear(IO_BANK0_GPIO_CTRL_FUNCSEL_BITS);
-		self.0.atomic_bitset(GPIO_CTRL_F5);
+		self.0.atomic_bitset(fun as u32);
 	}
 
 	/* Overrides */
