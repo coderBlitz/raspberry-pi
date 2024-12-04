@@ -23,27 +23,27 @@ impl Gpio {
 	}
 
 	pub fn use_f0(&self) {
-		self.0.atomic_bitclear(GPIO_FUNCSEL_BITS);
-		self.0.atomic_bitset(GPIO_F0);
+		self.0.atomic_bitclear(IO_BANK0_GPIO_CTRL_FUNCSEL_BITS);
+		self.0.atomic_bitset(GPIO_CTRL_F0);
 	}
 	pub fn use_f1(&self) {
-		self.0.atomic_bitclear(GPIO_FUNCSEL_BITS);
-		self.0.atomic_bitset(GPIO_F1);
+		self.0.atomic_bitclear(IO_BANK0_GPIO_CTRL_FUNCSEL_BITS);
+		self.0.atomic_bitset(GPIO_CTRL_F1);
 	}
 	pub fn use_f2(&self) {
-		self.0.atomic_bitclear(GPIO_FUNCSEL_BITS);
-		self.0.atomic_bitset(GPIO_F2);
+		self.0.atomic_bitclear(IO_BANK0_GPIO_CTRL_FUNCSEL_BITS);
+		self.0.atomic_bitset(GPIO_CTRL_F2);
 	}
 	pub fn use_f3(&self) {
-		self.0.atomic_bitclear(GPIO_FUNCSEL_BITS);
-		self.0.atomic_bitset(GPIO_F3);
+		self.0.atomic_bitclear(IO_BANK0_GPIO_CTRL_FUNCSEL_BITS);
+		self.0.atomic_bitset(GPIO_CTRL_F3);
 	}
 	pub fn use_f4(&self) {
-		self.0.atomic_bitclear(GPIO_FUNCSEL_BITS);
-		self.0.atomic_bitset(GPIO_F4);
+		self.0.atomic_bitclear(IO_BANK0_GPIO_CTRL_FUNCSEL_BITS);
+		self.0.atomic_bitset(GPIO_CTRL_F4);
 	}
 	pub fn use_f5(&self) {
-		self.0.atomic_bitclear(GPIO_FUNCSEL_BITS);
-		self.0.atomic_bitset(GPIO_F5);
+		self.0.atomic_bitclear(IO_BANK0_GPIO_CTRL_FUNCSEL_BITS);
+		self.0.atomic_bitset(GPIO_CTRL_F5);
 	}
 }

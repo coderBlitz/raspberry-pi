@@ -1,20 +1,3 @@
-/* Function constants */
-pub const GPIO_F0: u32 = 0x0;
-pub const GPIO_F1: u32 = 0x1;
-pub const GPIO_F2: u32 = 0x2;
-pub const GPIO_F3: u32 = 0x3;
-pub const GPIO_F4: u32 = 0x4;
-pub const GPIO_F5: u32 = 0x5;
-pub const GPIO_F6: u32 = 0x6;
-pub const GPIO_F7: u32 = 0x7;
-
-pub const GPIO_FUNC_SIO: u32 = GPIO_F5;
-
-pub const GPIO_FUNC_NULL: u32 = 0x1F;
-
-pub const GPIO_FUNCSEL_SHIFT: usize = 0;
-pub const GPIO_FUNCSEL_BITS: u32 = 0x1F << GPIO_FUNCSEL_SHIFT;
-
 /* IO_BANK0.GPIOXX_STATUS */
 pub const IO_BANK0_GPIO_STATUS_IRQTOPROC_BIT: u32 = 1 << 26;
 pub const IO_BANK0_GPIO_STATUS_IRQFROMPAD_BIT: u32 = 1 << 24;
@@ -35,6 +18,24 @@ pub const IO_BANK0_GPIO_CTRL_OEOVER_BITS: u32 = 3 << IO_BANK0_GPIO_CTRL_OEOVER_S
 pub const IO_BANK0_GPIO_CTRL_OUTOVER_SHIFT: usize = 8;
 pub const IO_BANK0_GPIO_CTRL_OUTOVER_BITS: u32 = 3 << IO_BANK0_GPIO_CTRL_OUTOVER_SHIFT;
 pub const IO_BANK0_GPIO_CTRL_FUNCSEL_BITS: u32 = 0x1F;
+
+// Function constants
+pub const GPIO_CTRL_F0: u32 = 0x0;
+pub const GPIO_CTRL_F1: u32 = 0x1;
+pub const GPIO_CTRL_F2: u32 = 0x2;
+pub const GPIO_CTRL_F3: u32 = 0x3;
+pub const GPIO_CTRL_F4: u32 = 0x4;
+pub const GPIO_CTRL_F5: u32 = 0x5;
+pub const GPIO_CTRL_F6: u32 = 0x6;
+pub const GPIO_CTRL_F7: u32 = 0x7;
+pub const GPIO_FUNC_SIO: u32 = GPIO_CTRL_F5;
+pub const GPIO_FUNC_NULL: u32 = 0x1F;
+
+// All other CTRL constants
+pub const GPIO_CTRL_NORMAL: u32 = 0;
+pub const GPIO_CTRL_INVERT: u32 = 1;
+pub const GPIO_CTRL_LOWDIS: u32 = 2;
+pub const GPIO_CTRL_HIGHEN: u32 = 3;
 
 /* PADS_BANK0.VOLTAGE_SELECT */
 pub const PADS_BANK0_VOLTAGE_SELECT_BIT: u32 = 1 << 0;
