@@ -171,3 +171,23 @@ impl Gpio {
 		self.0.get() & IO_BANK0_GPIO_STATUS_OUTFROMPERI_BIT != 0
 	}
 }
+
+impl core::convert::From<GpioPin> for Gpio {
+	fn from(pin: GpioPin) -> Self {
+		unsafe {
+			Self::gpio_id(pin as u32)
+		}
+	}
+}
+impl core::convert::From<QspiPin> for Gpio {
+	fn from(pin: QspiPin) -> Self {
+		unsafe {
+			Self::qspi_id(pin as u32)
+		}
+	}
+}
+impl core::convert::From<Pin> for Gpio {
+	fn from(pin: Pin) -> Self {
+			Self::new(pin)
+	}
+}
