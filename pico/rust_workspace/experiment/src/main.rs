@@ -2,6 +2,7 @@
 #![no_main]
 
 use pico::*;
+use pico::gpio::*;
 use core::time::Duration;
 
 fn main() {
@@ -43,14 +44,14 @@ fn stuff() {
 
 #[inline(always)]
 fn set_led(on: bool) {
-	let pin25_ctrl = unsafe { Register::new(pico::consts::GPIO25_CTRL) };
-	const LED_PIN_STATE_ON: u32 = 0x0000_3305;
-	const LED_PIN_STATE_OFF: u32 = 0x0000_3205;
+	let pin25_ctrl = Gpio::from(GpioPin::Gpio25);
+	pin25_ctrl.oe_override(GpioOverride::HighEnable);
+	pin25_ctrl.select_fn(GpioFn::Fn5);
 
 	if on {
-		pin25_ctrl.set(LED_PIN_STATE_ON);
+		pin25_ctrl.out_override(GpioOverride::HighEnable);
 	} else {
-		pin25_ctrl.set(LED_PIN_STATE_OFF);
+		pin25_ctrl.out_override(GpioOverride::LowDisable);
 	}
 }
 
