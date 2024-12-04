@@ -11,6 +11,56 @@ pub enum GpioOverride {
 	HighEnable = GPIO_CTRL_HIGHEN,
 }
 
+#[derive(Clone, Copy, Eq, PartialEq)]
+pub enum Pin {
+	Gpio(GpioPin),
+	Qspi(QspiPin),
+}
+
+#[derive(Clone, Copy, Eq, PartialEq)]
+pub enum GpioPin {
+	Gpio0 = 0,
+	Gpio1,
+	Gpio2,
+	Gpio3,
+	Gpio4,
+	Gpio5,
+	Gpio6,
+	Gpio7,
+	Gpio8,
+	Gpio9,
+	Gpio10,
+	Gpio11,
+	Gpio12,
+	Gpio13,
+	Gpio14,
+	Gpio15,
+	Gpio16,
+	Gpio17,
+	Gpio18,
+	Gpio19,
+	Gpio20,
+	Gpio21,
+	Gpio22,
+	Gpio23,
+	Gpio24,
+	Gpio25,
+	Gpio26,
+	Gpio27,
+	Gpio28,
+	Gpio29,
+}
+
+#[derive(Clone, Copy, Eq, PartialEq)]
+pub enum QspiPin {
+	Sclk,
+	Ss,
+	Sd0,
+	Sd1,
+	Sd2,
+	Sd3,
+}
+
 /// Represents a GPIO pin.
 // Stored value is the address of the STATUS register, CTRL is +4. Pad control
 //  is PADS_BANK0_BASE + id*4.
@@ -18,6 +68,14 @@ pub enum GpioOverride {
 //  ID by 8 to get the address. Bit shifting here to avoid multiply.
 pub struct Gpio(Register);
 impl Gpio {
+	pub const fn new(pin: Pin) -> Self {
+		unsafe {
+			match pin {
+				Pin::Gpio(p) => Self::gpio_id(p as u32),
+				Pin::Qspi(p) => Self::qspi_id(p as u32),
+			}
+		}
+	}
 	/// Get instance of a GPIO pin, where `id <= 29`.
 	pub const unsafe fn gpio_id(id: u32) -> Self {
 		unsafe {
@@ -31,6 +89,7 @@ impl Gpio {
 		}
 	}
 
+	/* Function selects */
 	pub fn use_f0(&self) {
 		self.0.atomic_bitclear(IO_BANK0_GPIO_CTRL_FUNCSEL_BITS);
 		self.0.atomic_bitset(GPIO_CTRL_F0);
@@ -56,6 +115,7 @@ impl Gpio {
 		self.0.atomic_bitset(GPIO_CTRL_F5);
 	}
 
+	/* Overrides */
 	/// Set interrupt override.
 	pub fn irq_override(&self, v: GpioOverride) {
 		self.0.atomic_bitclear(IO_BANK0_GPIO_CTRL_IRQOVER_BITS);
@@ -75,5 +135,39 @@ impl Gpio {
 	pub fn out_override(&self, v: GpioOverride) {
 		self.0.atomic_bitclear(IO_BANK0_GPIO_CTRL_OUTOVER_BITS);
 		self.0.atomic_bitset((v as u32) << IO_BANK0_GPIO_CTRL_OUTOVER_SHIFT);
+	}
+
+	/* Status bits */
+	/// Interrupt to processors after override.
+	pub fn irq_to_proc(&self) -> bool {
+		self.0.get() & IO_BANK0_GPIO_STATUS_IRQTOPROC_BIT != 0
+	}
+	/// Interrupt from pad before override.
+	pub fn irq_from_pad(&self) -> bool {
+		self.0.get() & IO_BANK0_GPIO_STATUS_IRQFROMPAD_BIT != 0
+	}
+	/// Input to peripheral after override.
+	pub fn in_to_peri(&self) -> bool {
+		self.0.get() & IO_BANK0_GPIO_STATUS_INTOPERI_BIT != 0
+	}
+	/// Input from pad before override.
+	pub fn in_from_pad(&self) -> bool {
+		self.0.get() & IO_BANK0_GPIO_STATUS_INFROMPAD_BIT != 0
+	}
+	/// Output enable to pad after override.
+	pub fn oe_to_pad(&self) -> bool {
+		self.0.get() & IO_BANK0_GPIO_STATUS_OETOPAD_BIT != 0
+	}
+	/// Output enable from peripheral before override.
+	pub fn oe_from_peri(&self) -> bool {
+		self.0.get() & IO_BANK0_GPIO_STATUS_OEFROMPERI_BIT != 0
+	}
+	/// Output to pad after override.
+	pub fn out_to_pad(&self) -> bool {
+		self.0.get() & IO_BANK0_GPIO_STATUS_OUTTOPAD_BIT != 0
+	}
+	/// Output from peripheral before override.
+	pub fn out_from_peri(&self) -> bool {
+		self.0.get() & IO_BANK0_GPIO_STATUS_OUTFROMPERI_BIT != 0
 	}
 }
