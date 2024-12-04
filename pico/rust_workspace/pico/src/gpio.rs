@@ -77,7 +77,7 @@ pub enum GpioFn {
 //  is PADS_BANK0_BASE + id*4.
 // Each GPIO pin gets 8 bytes (4 for STATUS, 4 for CTRL), so multiply
 //  ID by 8 to get the address. Bit shifting here to avoid multiply.
-pub struct Gpio(Register);
+pub struct Gpio(Register, Register);
 impl Gpio {
 	pub const fn new(pin: Pin) -> Self {
 		unsafe {
@@ -90,42 +90,48 @@ impl Gpio {
 	/// Get instance of a GPIO pin, where `id <= 29`.
 	pub const unsafe fn gpio_id(id: u32) -> Self {
 		unsafe {
-			Gpio(Register::new(IO_BANK0_BASE + id << 3))
+			Gpio(
+				Register::new(IO_BANK0_BASE + id << 3),
+				Register::new(IO_BANK0_BASE + (id << 3) + 4),
+			)
 		}
 	}
 	/// Get instance of a QSPI pin, where `id <= 5`.
 	pub const unsafe fn qspi_id(id: u32) -> Self {
 		unsafe {
-			Gpio(Register::new(IO_QSPI_BASE + id << 3))
+			Gpio(
+				Register::new(IO_QSPI_BASE + id << 3),
+				Register::new(IO_QSPI_BASE + (id << 3) + 4),
+			)
 		}
 	}
 
 	/* Function selects */
 	pub fn select_fn(&self, fun: GpioFn) {
-		self.0.atomic_bitclear(IO_BANK0_GPIO_CTRL_FUNCSEL_BITS);
-		self.0.atomic_bitset(fun as u32);
+		self.1.atomic_bitclear(IO_BANK0_GPIO_CTRL_FUNCSEL_BITS);
+		self.1.atomic_bitset(fun as u32);
 	}
 
 	/* Overrides */
 	/// Set interrupt override.
 	pub fn irq_override(&self, v: GpioOverride) {
-		self.0.atomic_bitclear(IO_BANK0_GPIO_CTRL_IRQOVER_BITS);
-		self.0.atomic_bitset((v as u32) << IO_BANK0_GPIO_CTRL_IRQOVER_SHIFT);
+		self.1.atomic_bitclear(IO_BANK0_GPIO_CTRL_IRQOVER_BITS);
+		self.1.atomic_bitset((v as u32) << IO_BANK0_GPIO_CTRL_IRQOVER_SHIFT);
 	}
 	/// Set input override.
 	pub fn in_override(&self, v: GpioOverride) {
-		self.0.atomic_bitclear(IO_BANK0_GPIO_CTRL_INOVER_BITS);
-		self.0.atomic_bitset((v as u32) << IO_BANK0_GPIO_CTRL_INOVER_SHIFT);
+		self.1.atomic_bitclear(IO_BANK0_GPIO_CTRL_INOVER_BITS);
+		self.1.atomic_bitset((v as u32) << IO_BANK0_GPIO_CTRL_INOVER_SHIFT);
 	}
 	/// Set output enable override.
 	pub fn oe_override(&self, v: GpioOverride) {
-		self.0.atomic_bitclear(IO_BANK0_GPIO_CTRL_OEOVER_BITS);
-		self.0.atomic_bitset((v as u32) << IO_BANK0_GPIO_CTRL_OEOVER_SHIFT);
+		self.1.atomic_bitclear(IO_BANK0_GPIO_CTRL_OEOVER_BITS);
+		self.1.atomic_bitset((v as u32) << IO_BANK0_GPIO_CTRL_OEOVER_SHIFT);
 	}
 	/// Set output override.
 	pub fn out_override(&self, v: GpioOverride) {
-		self.0.atomic_bitclear(IO_BANK0_GPIO_CTRL_OUTOVER_BITS);
-		self.0.atomic_bitset((v as u32) << IO_BANK0_GPIO_CTRL_OUTOVER_SHIFT);
+		self.1.atomic_bitclear(IO_BANK0_GPIO_CTRL_OUTOVER_BITS);
+		self.1.atomic_bitset((v as u32) << IO_BANK0_GPIO_CTRL_OUTOVER_SHIFT);
 	}
 
 	/* Status bits */
