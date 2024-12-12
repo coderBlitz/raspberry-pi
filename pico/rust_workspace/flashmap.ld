@@ -38,12 +38,22 @@ MEMORY {
 	/* Second-stage bootloader region */
 	BOOT2: ORIGIN = 0x20000000, LENGTH = 0x100
 	CODE: ORIGIN = 0x10000100, LENGTH = 0x1FFF00
+
+	/* RAM code region */
+	RAM_TEXT (rwx): ORIGIN = ORIGIN(SRAM) + 256, LENGTH = LENGTH(SRAM) - 256 /* Leave space at start of RAM for vector table or other */
 }
 
 ENTRY(_strat)
 SECTIONS {
+	/* Section when loading all non-stage 2 code */
 	.text ALIGN(4) : {
 		*(.strat)
 		*(.text .text.*)
-	} > CODE /* Section when loading all non-stage 2 code */
+		_end_text = .;
+	} > CODE
+	.ramload ALIGN(4) : AT ( ADDR (.text) + SIZEOF (.text) ) {
+		_ram_text = .;
+		*(.ram)
+		_ram_text_end = .;
+	} > RAM_TEXT
 }

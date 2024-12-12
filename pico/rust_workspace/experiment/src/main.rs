@@ -5,7 +5,27 @@ use pico::*;
 use pico::gpio::*;
 use core::time::Duration;
 
+extern "C" {
+	static _end_text: u32;
+	static _ram_text: u32;
+	static _end_ram_text: u32;
+}
+
+// TODO: Debug
+fn copy_ram_fns() { unsafe {
+	let mut src = &raw const _end_text;
+	let mut dst = &raw const _ram_text as *mut _;
+	let ram_end = &raw const _ram_text;
+	while dst < ram_end as _ {
+		*dst = *src;
+		dst = dst.add(1);
+		src = src.add(1);
+	}
+}}
+
 fn main() {
+	//copy_ram_fns();
+
 	resets::enable_io_bank0();
 
 	// Enable and switch REF and SYS to the XOSC.
@@ -55,6 +75,7 @@ fn set_led(on: bool) {
 	}
 }
 
+//#[link_section = ".ram"]
 #[inline(always)]
 fn flash_led() -> ! {
 	/* Attempt to turn on LED.
