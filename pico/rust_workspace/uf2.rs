@@ -158,4 +158,5 @@ fn main() {
 	let out_file = argv.get(2).unwrap_or(&default_out);
 	let f = &mut fs::File::create(out_file).expect("Could not open file to write");
 	f.write(&out).expect("Write failed");
+	println!("Final UF2 written to {out_file}");
 }
