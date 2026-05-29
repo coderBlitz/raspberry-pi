@@ -94,7 +94,7 @@ fn create_uf2(offset: u32, data: &[u8]) -> Vec<u8> {
 		let end = data.len().min(start + 256);
 		let chunk_len = end - start;
 		block.extend_from_slice(&data[start .. end]);
-		println!("Data peek: {:x?}", &data[start .. (start + 8)]);
+		println!("Data peek: {:x?}", &data[start .. (start + 8).min(end)]);
 
 		// Pad and add final magic
 		block.extend_from_slice(&PADDING[..(476 - chunk_len)]);
