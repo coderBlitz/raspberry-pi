@@ -36,8 +36,8 @@ MEMORY {
 	USB_DPRAM (rwx) : ORIGIN = 0x50100000, LENGTH = 4K
 
 	/* Second-stage bootloader region */
-	BOOT2: ORIGIN = 0x20000000, LENGTH = 0x100
-	CODE: ORIGIN = 0x10000100, LENGTH = 0x1FFF00
+	BOOT2 (rx): ORIGIN = 0x20000000, LENGTH = 0x100
+	CODE (rx): ORIGIN = 0x10000100, LENGTH = 0x1FFF00
 
 	/* RAM code region */
 	RAM_TEXT (rwx): ORIGIN = ORIGIN(SRAM) + 256, LENGTH = LENGTH(SRAM) - 256 /* Leave space at start of RAM for vector table or other */
@@ -47,6 +47,7 @@ ENTRY(_strat)
 SECTIONS {
 	/* Section when loading all non-stage 2 code */
 	.text ALIGN(4) : {
+		_text = .;
 		*(.strat)
 		*(.text .text.*)
 		_end_text = .;
