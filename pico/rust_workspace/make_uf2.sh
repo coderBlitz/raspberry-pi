@@ -7,7 +7,11 @@ if [[ $1 == "" ]]; then
 	exit 1
 fi
 
-STAGE2="target/thumbv6m-none-eabi/release/stage2"
+# Stage 2 when experimenting
+#STAGE2="target/thumbv6m-none-eabi/release/stage2"
+
+# Known good stage 2 for regular flash XIP.
+STAGE2="stage2-normal"
 
 arm-none-eabi-objcopy -O binary -j .text $STAGE2 /tmp/stage2.bin
 arm-none-eabi-objcopy -O binary $1 /tmp/main.bin
