@@ -35,6 +35,10 @@ Just calls the ROM functions to connect flash and enable XIP.
    .boot stuff that has ". = 0xFC" (whatever 252 bytes) to maybe force padding
    and negating the need for the make_uf2 script. See [location counter][3] for
    example.
+* Since XIP (probably) prevents loading code from flash into RAM, needs to be
+   done before XIP is enabled (i.e. stage 2 needs to handle). Above bullet
+   combining stage 2 into each executable should make this much simpler to
+   achieve since the stage 2 would now know about the "load to ram" section.
 
 [1]: https://github.com/rp-rs/rp-hal/blob/main/rp2040-hal/src/float/div.rs
 [2]: https://gcc.gnu.org/onlinedocs/gccint/Soft-float-library-routines.html
