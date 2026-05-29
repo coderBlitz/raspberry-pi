@@ -47,14 +47,14 @@ ENTRY(_strat)
 SECTIONS {
 	/* Section when loading all non-stage 2 code */
 	.text ALIGN(4) : {
-		_text = .;
 		*(.strat)
 		*(.text .text.*)
 		_end_text = .;
 	} > CODE
-	.ramload ALIGN(4) : AT ( ADDR (.text) + SIZEOF (.text) ) {
-		_ram_text = .;
-		*(.ram)
-		_ram_text_end = .;
+
+	.ramload ALIGN(4) : AT( LOADADDR(.text) + SIZEOF(.text)) {
+		_start_ramload = .;
+		KEEP(*(.ram))
+		_end_ramload = .;
 	} > RAM_TEXT
 }
