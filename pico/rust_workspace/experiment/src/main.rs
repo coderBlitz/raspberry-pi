@@ -31,6 +31,12 @@ fn copy_ram_fns() {
     }
 }
 
+fn check_size() -> u32 {
+	unsafe {
+	(&raw const _end_ramload).offset_from(&raw const _start_ramload) as u32
+	}
+}
+
 fn main() {
     resets::enable_io_bank0();
 
@@ -47,15 +53,22 @@ fn main() {
 
     // Try things
     //stuff();
+    test_modulus();
 
     // Testing copy RAM
     //copy_ram_fns();
-    //flash_n(size, None);
+    //let size = check_size();
+    //flash_n(size, Some(Duration::from_millis(250)));
     //flash_n(1, Some(Duration::from_secs(2)));
 
     //led_on_from_ram();
 
-    flash_led();
+    //flash_led();
+    // Heartbeat style flashing.
+    loop {
+    	flash_n(2, Some(Duration::from_millis(100)));
+    	timer::sleep(Duration::from_millis(500));
+    }
 }
 
 fn stuff() {
@@ -72,6 +85,17 @@ fn stuff() {
     if (ctz(0) / 6) != 5 {
         loop {}
     }
+}
+
+fn test_modulus() {
+	const N: u64 = 20;
+	for i in 0..N {
+		//let val = core::hint::black_box(i) % core::hint::black_box(N);
+		let val = core::hint::black_box(i) % N;
+		if val != i {
+			loop {}
+		}
+	}
 }
 
 #[inline(always)]
