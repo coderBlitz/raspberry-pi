@@ -24,14 +24,47 @@ pub mod watchdog;
 
 static UDIV_DIVIDEND: Register = unsafe { Register::new(consts::SIO_DIV_UDIVIDEND) };
 static UDIV_DIVISOR: Register = unsafe { Register::new(consts::SIO_DIV_UDIVISOR) };
+static SDIV_DIVIDEND: Register = unsafe { Register::new(consts::SIO_DIV_SDIVIDEND) };
+static SDIV_DIVISOR: Register = unsafe { Register::new(consts::SIO_DIV_SDIVISOR) };
 static DIV_QUOTIENT: Register = unsafe { Register::new(consts::SIO_DIV_QUOTIENT) };
 static DIV_REMAINDER: Register = unsafe { Register::new(consts::SIO_DIV_REMAINDER) };
+
+/// Emits a single No-op instruction.
+#[inline(always)]
+pub fn nop() {
+	unsafe {
+		asm!("NOP", options(nomem, nostack));
+	}
+}
 
 // Use the SIO for integer division. 64 bit combines quotient and remainder.
 // Quotient should be high 32 bits, remainder low 32 bits.
 // See https://github.com/ARM-software/abi-aa/blob/main/rtabi32/rtabi32.rst#integer-32-32-32-division-functions
 #[unsafe(no_mangle)]
-extern "C" fn __aeabi_uidiv(num: u32, den: u32) -> u64 {
+extern "C" fn __aeabi_uidiv(num: u32, den: u32) -> u32 {
+	// Write the values
+	UDIV_DIVIDEND.set(num);
+	UDIV_DIVISOR.set(den);
+
+	// Delay 8 cycles
+	nop();
+	nop();
+	nop();
+	nop();
+	nop();
+	nop();
+	nop();
+	nop();
+
+	// Get results
+	DIV_QUOTIENT.get()
+}
+
+// Use the SIO for integer division. 64 bit combines quotient and remainder.
+// Quotient should be high 32 bits, remainder low 32 bits.
+// See https://github.com/ARM-software/abi-aa/blob/main/rtabi32/rtabi32.rst#integer-32-32-32-division-functions
+#[unsafe(no_mangle)]
+extern "C" fn __aeabi_uidivmod(num: u32, den: u32) -> u64 {
 	// Write the values
 	UDIV_DIVIDEND.set(num);
 	UDIV_DIVISOR.set(den);
@@ -50,9 +83,48 @@ extern "C" fn __aeabi_uidiv(num: u32, den: u32) -> u64 {
 	(DIV_QUOTIENT.get() as u64) << 32 | DIV_REMAINDER.get() as u64
 }
 
-#[inline(always)]
-pub fn nop() {
-	unsafe {
-		asm!("NOP", options(nomem, nostack));
-	}
+// Use the SIO for integer division. 64 bit combines quotient and remainder.
+// Quotient should be high 32 bits, remainder low 32 bits.
+// See https://github.com/ARM-software/abi-aa/blob/main/rtabi32/rtabi32.rst#integer-32-32-32-division-functions
+#[unsafe(no_mangle)]
+extern "C" fn __aeabi_idiv(num: u32, den: u32) -> u32 {
+	// Write the values
+	SDIV_DIVIDEND.set(num);
+	SDIV_DIVISOR.set(den);
+
+	// Delay 8 cycles
+	nop();
+	nop();
+	nop();
+	nop();
+	nop();
+	nop();
+	nop();
+	nop();
+
+	// Get results
+	DIV_QUOTIENT.get()
+}
+
+// Use the SIO for integer division. 64 bit combines quotient and remainder.
+// Quotient should be high 32 bits, remainder low 32 bits.
+// See https://github.com/ARM-software/abi-aa/blob/main/rtabi32/rtabi32.rst#integer-32-32-32-division-functions
+#[unsafe(no_mangle)]
+extern "C" fn __aeabi_idivmod(num: u32, den: u32) -> u64 {
+	// Write the values
+	SDIV_DIVIDEND.set(num);
+	SDIV_DIVISOR.set(den);
+
+	// Delay 8 cycles
+	nop();
+	nop();
+	nop();
+	nop();
+	nop();
+	nop();
+	nop();
+	nop();
+
+	// Get results
+	(DIV_QUOTIENT.get() as u64) << 32 | DIV_REMAINDER.get() as u64
 }
