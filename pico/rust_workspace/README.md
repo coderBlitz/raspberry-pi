@@ -30,6 +30,12 @@ Just calls the ROM functions to connect flash and enable XIP.
    RAM, any jumps to/from it _should_ be properly addressed. Needs testing.
 * Vector table offset register is the _high_ 24 bits of the table address, so
    the table itself must be aligned to 256 bits.
+* Combine all the LD scripts if at all possible. In a similar vein, look at
+   bringing the stage 2 into the pico library and make a linker section for
+   .boot stuff that has ". = 0xFC" (whatever 252 bytes) to maybe force padding
+   and negating the need for the make_uf2 script. See [location counter][3] for
+   example.
 
 [1]: https://github.com/rp-rs/rp-hal/blob/main/rp2040-hal/src/float/div.rs
 [2]: https://gcc.gnu.org/onlinedocs/gccint/Soft-float-library-routines.html
+[3]: https://sourceware.org/binutils/docs/ld/Location-Counter.html
