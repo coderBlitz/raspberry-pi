@@ -1,6 +1,5 @@
 [build]
 target = "thumbv6m-none-eabi"
 rustflags = [
-	"-C", "target-cpu=cortex-m0plus",
-	"-C", "link-args=-T bootmap.ld"
+	"-C", "target-cpu=cortex-m0plus"
 ]
