@@ -16,7 +16,7 @@ extern "C" {
 // fault.
 fn copy_ram_fns() {
     unsafe {
-    	//let mut count = 0;
+        //let mut count = 0;
         let mut src = &raw const _end_text;
         let mut dst = (&raw const _start_ramload) as *mut u8;
         let dst_end = &raw const _end_ramload;
@@ -32,9 +32,7 @@ fn copy_ram_fns() {
 }
 
 fn check_size() -> u32 {
-	unsafe {
-	(&raw const _end_ramload).offset_from(&raw const _start_ramload) as u32
-	}
+    unsafe { (&raw const _end_ramload).offset_from(&raw const _start_ramload) as u32 }
 }
 
 fn main() {
@@ -66,8 +64,8 @@ fn main() {
     //flash_led();
     // Heartbeat style flashing.
     loop {
-    	flash_n(2, Some(Duration::from_millis(100)));
-    	timer::sleep(Duration::from_millis(500));
+        flash_n(2, Some(Duration::from_millis(100)));
+        timer::sleep(Duration::from_millis(500));
     }
 }
 
@@ -88,14 +86,14 @@ fn stuff() {
 }
 
 fn test_modulus() {
-	const N: u64 = 20;
-	for i in 0..N {
-		//let val = core::hint::black_box(i) % core::hint::black_box(N);
-		let val = core::hint::black_box(i) % N;
-		if val != i {
-			loop {}
-		}
-	}
+    const N: u64 = 20;
+    for i in 0..N {
+        //let val = core::hint::black_box(i) % core::hint::black_box(N);
+        let val = core::hint::black_box(i) % N;
+        if val != i {
+            loop {}
+        }
+    }
 }
 
 #[inline(always)]
@@ -112,21 +110,21 @@ fn set_led(on: bool) {
 }
 
 fn flash_n(n: u32, time: Option<Duration>) {
-	let sleep_time = time.unwrap_or(Duration::from_millis(500));
-	for _ in 0..n {
-		set_led(true);
-		timer::sleep(sleep_time);
-		set_led(false);
-		timer::sleep(sleep_time);
-	}
+    let sleep_time = time.unwrap_or(Duration::from_millis(500));
+    for _ in 0..n {
+        set_led(true);
+        timer::sleep(sleep_time);
+        set_led(false);
+        timer::sleep(sleep_time);
+    }
 }
 
 #[unsafe(no_mangle)]
 #[link_section = ".ram"]
 fn led_on_from_ram() {
-	loop {
-		set_led(true);
-	}
+    loop {
+        set_led(true);
+    }
 }
 
 //#[link_section = ".ram"] // Cannot inline when trying this.
